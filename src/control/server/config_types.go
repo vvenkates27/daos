@@ -24,6 +24,7 @@
 package main
 
 import (
+	"os"
 	"fmt"
 	"math"
 	"path/filepath"
@@ -174,14 +175,19 @@ type server struct {
 	// to be passed on I/O server invocation.
 	CliOpts   []string      // tuples (short option, value) e.g. ["-p", "10000"...]
 	formatted chan struct{} // closed when server is formatted
+	Hostname string   // used when generating templates
 }
 
 // newDefaultServer creates a new instance of server struct with default values.
 func newDefaultServer() server {
+	// TODO: fix by only ever creating server in one place
+	host, _ := os.Hostname()
+
 	return server{
 		ScmClass:    scmDCPM,
 		BdevClass:   bdNVMe,
 		NrXsHelpers: 2,
+		Hostname:    host,
 	}
 }
 
