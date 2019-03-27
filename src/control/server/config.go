@@ -376,7 +376,8 @@ func (c *configuration) setLogging(name string) (*os.File, error) {
 
 	// if no logfile specified, output from multiple hosts
 	// may get aggregated, prefix entries with hostname
-	log.NewDefaultLogger(log.Debug, name+" ", os.Stderr)
+	log.NewDefaultLogger(
+		log.Debug, c.Servers[0].Hostname+" ", os.Stderr)
 
 	return nil, nil
 }
