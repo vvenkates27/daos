@@ -55,8 +55,8 @@ type DeviceDiscovery struct {
 	Pad_cgo_2                [5]byte
 	Capacity                 uint64
 	Interface_format_codes   [9]uint16
-	Security_capabilities    _Ctype_struct_device_security_capabilities
-	Device_capabilities      _Ctype_struct_device_capabilities
+	//Security_capabilities    _Ctype_struct_device_security_capabilities
+	//Device_capabilities      _Ctype_struct_device_capabilities
 	Uid                      [22]int8
 	Lock_state               uint32
 	Manageability            uint32
@@ -89,6 +89,16 @@ type DeviceStatus struct {
 	Boot_status                  uint64
 	Injected_media_errors        uint32
 	Injected_non_media_errors    uint32
-	Error_log_status             _Ctype_struct_device_error_log_status
+	//Error_log_status             _Ctype_struct_device_error_log_status
 	Reserved                     [56]uint8
+}
+
+// IpmCtl is the interface that provides access to libipmctl.
+type IpmCtl interface {
+	// Discover persistent memory modules
+	Discover() ([]DeviceDiscovery, error)
+	// Update persistent memory module firmware
+	//Update(...)
+	// Cleanup persistent memory references
+	//Cleanup()
 }
