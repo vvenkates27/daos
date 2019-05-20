@@ -79,8 +79,7 @@ out:
 	pc_in = crt_req_get(arg->rpc);
 	D_ASSERT(pc_in != NULL);
 	daos_prop_free(pc_in->pc_prop);
-
-	daos_group_detach(arg->rpc->cr_ep.ep_grp);
+	dc_mgmt_group_detach(arg->rpc->cr_ep.ep_grp);
 	crt_req_decref(arg->rpc);
 	return rc;
 }
@@ -197,7 +196,7 @@ dc_pool_create(tse_task_t *task)
 	if (rc != 0)
 		D_GOTO(out, rc);
 
-	rc = daos_group_attach(args->grp, &svr_ep.ep_grp);
+	rc = dc_mgmt_group_attach(args->grp, &svr_ep.ep_grp);
 	if (rc != 0)
 		D_GOTO(out, rc);
 
@@ -244,7 +243,7 @@ out_put_req:
 	crt_req_decref(rpc_req);
 	crt_req_decref(rpc_req);
 out_grp:
-	daos_group_detach(svr_ep.ep_grp);
+	dc_mgmt_group_detach(svr_ep.ep_grp);
 out:
 	daos_prop_free(final_prop);
 	tse_task_complete(task, rc);
@@ -271,7 +270,7 @@ pool_destroy_cp(tse_task_t *task, void *data)
 	}
 
 out:
-	daos_group_detach(rpc->cr_ep.ep_grp);
+	dc_mgmt_group_detach(rpc->cr_ep.ep_grp);
 	crt_req_decref(rpc);
 	return rc;
 }
@@ -292,7 +291,7 @@ dc_pool_destroy(tse_task_t *task)
 		D_GOTO(out, rc = -DER_INVAL);
 	}
 
-	rc = daos_group_attach(args->grp, &svr_ep.ep_grp);
+	rc = dc_mgmt_group_attach(args->grp, &svr_ep.ep_grp);
 	if (rc != 0)
 		D_GOTO(out, rc);
 
@@ -333,7 +332,7 @@ out_put_req:
 	/** dec ref taken for crt_req_create */
 	crt_req_decref(rpc_req);
 out_group:
-	daos_group_detach(svr_ep.ep_grp);
+	dc_mgmt_group_detach(svr_ep.ep_grp);
 out:
 	tse_task_complete(task, rc);
 	return rc;
