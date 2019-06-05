@@ -25,11 +25,7 @@
 #define __DAOS_CHECKSUM_H
 
 #include <daos/common.h>
-#if defined(__x86_64__)
 #include <isa-l.h>
-#else
-#include <mchecksum.h>
-#endif
 
 #define DAOS_CSUM_SIZE 64
 
@@ -42,11 +38,7 @@ enum {
 
 struct daos_csum {
 	int			dc_init:1;
-#if defined(__x86_64__)
 	int			dc_csum;
-#else
-	mchecksum_object_t	dc_csum;
-#endif
 	char			dc_buf[DAOS_CSUM_SIZE];
 
 };

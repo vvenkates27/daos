@@ -43,7 +43,6 @@ struct da_entry {
 };
 
 struct obj_da {
-	pthread_key_t key;         /* key to threadprivate data */
 	pthread_mutex_t lock;      /* lock thread events */
 	d_list_t free_entries;     /* entries put in da by dead thread */
 	d_list_t allocated_blocks; /* blocks allocated by dead thread */
@@ -52,6 +51,8 @@ struct obj_da {
 	size_t padded_size;        /* real size of objects in da */
 	size_t block_size;         /* allocation size */
 	int magic;                 /* magic number for sanity */
+	pthread_key_t key;         /* key to threadprivate data */
+
 };
 
 #define PAD8(size) ((size + 7) & ~7)
