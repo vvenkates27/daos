@@ -76,17 +76,7 @@ daos_csum_init(const char *cs_name, daos_csum_t *cs_obj)
 		return -DER_NOSYS;
 	dict = &csum_dict[type];
 
-#if defined(__x86_64__)
 	cs_obj->dc_csum = type;
-#else
-	int rc;
-
-	rc = mchecksum_init(cs_name, &cs_obj->dc_csum);
-	if (rc < 0) {
-		D_ERROR("Error in initializing checksum\n");
-		return -DER_NOMEM;
-	}
-#endif
 	cs_obj->dc_init = 1;
 	memset(cs_obj->dc_buf, 0, DAOS_CSUM_SIZE);
 	D_DEBUG(DB_IO, "Initialize checksum=%s\n", dict->cs_name);
@@ -98,44 +88,26 @@ daos_csum_reset(daos_csum_t *cs_obj)
 {
 	if (!cs_obj->dc_init)
 		return -DER_UNINIT;
-#if defined(__x86_64__)
 	memset(cs_obj->dc_buf, 0, DAOS_CSUM_SIZE);
-#else
-	int  rc;
-
-	rc = mchecksum_reset(cs_obj->dc_csum);
-	if (rc < 0) {
-		D_ERROR("Error resetting mchecksum: %d\n", rc);
-		return -DER_UNINIT;
-	}
-#endif
 	return 0;
 }
 
 inline int
 daos_csum_free(daos_csum_t *cs_obj)
 {
-#if !defined(__x86_64__)
-	mchecksum_destroy(cs_obj->dc_csum);
-#endif
 	return 0;
 }
 
 inline daos_size_t
 daos_csum_get_size(const daos_csum_t *csum)
 {
-#if defined(__x86_64__)
 	return csum_dict[csum->dc_csum].cs_size;
-#else
-	return mchecksum_get_size(csum->dc_csum);
-#endif
 }
 
 inline int
 daos_csum_get(daos_csum_t *csum, daos_csum_buf_t *csum_buf)
 {
 
-#if defined(__x86_64__)
 	if (csum_buf->cs_buf_len != csum_dict[csum->dc_csum].cs_size) {
 		D_ERROR("Incorrect result buffer size provided\n");
 		return -DER_INVAL;
@@ -144,36 +116,21 @@ daos_csum_get(daos_csum_t *csum, daos_csum_buf_t *csum_buf)
 	       csum_dict[csum->dc_csum].cs_size);
 
 	return 0;
-#else
-	return mchecksum_get(csum, csum_buf->cs_csum, csum_buf->cs_buf_len,
-			     MCHECKSUM_FINALIZE);
-#endif
 }
+
 inline int
 daos_csum_compare(daos_csum_t *csum, daos_csum_t *csum_src)
 {
 
-#if defined(__x86_64__)
 	return (csum->dc_csum == csum_src->dc_csum) &&
 		!(memcmp(csum->dc_buf, csum_src->dc_buf,
 			 csum_dict[csum->dc_csum].cs_size));
-#else
-	size_t	hash_size;
-
-	hash_size = mchecksum_get_size(csum_src->dc_csum);
-	mchecksum_get(csum_src->dc_csum, &csum_src->dc_buf, hash_size,
-		      MCHECKSUM_FINALIZE);
-	mchecksum_get(csum->dc_csum, &csum->dc_buf, hash_size,
-		      MCHECKSUM_FINALIZE);
-	return !(strncmp(csum_src->dc_buf, csum->dc_buf, hash_size));
-#endif
 }
 
 static int
 daos_csum_update(daos_csum_t *csum, const void *buf,
 		 uint64_t len)
 {
-#if defined(__x86_64__)
 	switch (csum->dc_csum) {
 	case DAOS_CS_CRC64:
 	{
@@ -199,15 +156,6 @@ daos_csum_update(daos_csum_t *csum, const void *buf,
 		D_ERROR("Unknown checksum type\n");
 		return -DER_NOSYS;
 	}
-
-#else
-	/* accumulates a partial checksum of the input data */
-	int	 rc;
-
-	rc = mchecksum_update(csum->dc_csum, buf, len);
-	if (rc < 1)
-		return -DER_NOSYS;
-#endif
 	return 0;
 }
 

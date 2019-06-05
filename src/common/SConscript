@@ -14,10 +14,7 @@ def scons():
     prereqs.require(env, 'pmdk', 'argobots', 'cart', 'readline',
                     'protobufc', pmdk_libs=['pmemobj', 'pmem'])
 
-    if platform_arm:
-        prereqs.require(env, 'mchecksum')
-    else:
-        prereqs.require(env, 'isal')
+    prereqs.require(env, 'isal')
 
     denv = env.Clone()
     common_src = ['debug.c', 'mem.c', 'fail_loc.c', 'lru.c',
