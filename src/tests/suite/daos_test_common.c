@@ -55,16 +55,28 @@ test_setup_pool_create(void **state, struct test_pool *pool, daos_prop_t *prop)
 	}
 
 	if (arg->myrank == 0) {
-		char		*env;
-		int		 size_gb;
+		char		*env, *env_unit;
+		int		 size, unit_shift;
 		daos_size_t	 nvme_size;
 
+		unit_shift = 30;
+		env_unit = getenv("POOL_SCM_UNIT");
+		if (env_unit) {
+			if (!strcasecmp(env_unit, "MB"))
+				unit_shift = 20;
+			else if (!strcasecmp(env_unit, "KB"))
+				unit_shift = 10;
+			else
+				unit_shift = 30; //GB
+
+		}
 		env = getenv("POOL_SCM_SIZE");
 		if (env) {
-			size_gb = atoi(env);
-			if (size_gb != 0)
+			size = atoi(env);
+
+			if (size != 0)
 				arg->pool.pool_size =
-					(daos_size_t)size_gb << 30;
+					(daos_size_t)size << unit_shift;
 		}
 
 		/*
@@ -76,13 +88,18 @@ test_setup_pool_create(void **state, struct test_pool *pool, daos_prop_t *prop)
 		nvme_size = arg->pool.pool_size * 2;
 		env = getenv("POOL_NVME_SIZE");
 		if (env) {
-			size_gb = atoi(env);
-			nvme_size = (daos_size_t)size_gb << 30;
+			size = atoi(env);
+			nvme_size = (daos_size_t)size << 30;
 		}
 
-		print_message("setup: creating pool, SCM size="DF_U64" GB, "
-			      "NVMe size="DF_U64" GB\n",
-			      (arg->pool.pool_size >> 30), nvme_size >> 30);
+		if (env_unit)
+			print_message("setup: creating pool, SCM size="DF_U64" %s, "
+				      "NVMe size="DF_U64" GB\n",
+				      (arg->pool.pool_size >> unit_shift), env_unit, nvme_size >> 30);
+		else
+			print_message("setup: creating pool, SCM size="DF_U64" GB, "
+				      "NVMe size="DF_U64" GB\n",
+				      (arg->pool.pool_size >> 30), nvme_size >> 30);
 		rc = daos_pool_create(arg->mode, arg->uid, arg->gid, arg->group,
 				      NULL, "pmem", arg->pool.pool_size,
 				      nvme_size, prop, &arg->pool.svc,
