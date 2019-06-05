@@ -1084,10 +1084,9 @@ enumerate_rec(daos_handle_t th, char *dkey, char *akey,
 		assert_int_equal(req->ev.ev_error, 0);
 	}
 }
-
+int     ENUM_KEY_REC_NR;
 #define ENUM_KEY_BUF		32 /* size of each dkey/akey */
 #define ENUM_LARGE_KEY_BUF	(512 * 1024) /* 512k large key */
-#define ENUM_KEY_REC_NR		1000 /* number of keys/records to insert */
 #define ENUM_PRINT		100 /* print every 100th key/record */
 #define ENUM_DESC_NR		5 /* number of keys/records returned by enum */
 #define ENUM_DESC_BUF		512 /* all keys/records returned by enum */
@@ -2761,7 +2760,7 @@ tgt_idx_change_retry(void **state)
 		assert_int_equal(rc, 0);
 
 		/** progress the async IO (not must) */
-		insert_test(&req, 1000);
+		insert_test(&req, ENUM_KEY_REC_NR);
 
 		/** wait until rebuild done */
 		test_rebuild_wait(&arg, 1);
@@ -3623,11 +3622,18 @@ int
 obj_setup(void **state)
 {
 	int	rc;
+	char	*env_nr;
 
 	rc = test_setup(state, SETUP_CONT_CONNECT, true, DEFAULT_POOL_SIZE,
 			NULL);
 	if (rc != 0)
 		return rc;
+
+	env_nr = getenv("KEY_REC_NR");
+	if (env_nr)
+		ENUM_KEY_REC_NR = atoi(env_nr);
+	else
+		ENUM_KEY_REC_NR = 1000;
 
 	return obj_setup_internal(state);
 }
