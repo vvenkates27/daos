@@ -55,7 +55,7 @@ var (
 // IpmCtl provides necessary methods to interact with Storage Class
 // Memory modules through libipmctl via go-ipmctl bindings.
 type scmStorage struct {
-	ipmctl      ipmctl.IpmCtl  // ipmctl NVM API interface
+//	ipmctl      ipmctl.IpmCtl  // ipmctl NVM API interface
 	config      *configuration // server configuration structure
 	modules     []*pb.ScmModule
 	initialized bool
@@ -122,14 +122,14 @@ func (s *scmStorage) Discover(resp *pb.ScanStorageResp) {
 		return
 	}
 
-	mms, err := s.ipmctl.Discover()
-	if err != nil {
-		resp.Scmstate = addStateDiscover(
-			pb.ResponseStatus_CTRL_ERR_SCM,
-			msgIpmctlDiscoverFail+": "+err.Error(), "")
-		return
-	}
-	s.modules = loadModules(mms)
+//	mms, err := s.ipmctl.Discover()
+//	if err != nil {
+//		resp.Scmstate = addStateDiscover(
+//			pb.ResponseStatus_CTRL_ERR_SCM,
+//			msgIpmctlDiscoverFail+": "+err.Error(), "")
+//		return
+//	}
+//	s.modules = loadModules(mms)
 
 	resp.Scmstate = addStateDiscover(pb.ResponseStatus_CTRL_SUCCESS, "", "")
 	resp.Modules = s.modules
@@ -336,7 +336,7 @@ func (s *scmStorage) Update(
 // NvmMgmt is the implementation of ipmctl interface in go-ipmctl
 func newScmStorage(config *configuration) *scmStorage {
 	return &scmStorage{
-		ipmctl: &ipmctl.NvmMgmt{},
+//		ipmctl: &ipmctl.NvmMgmt{},
 		config: config,
 	}
 

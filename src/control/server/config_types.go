@@ -177,7 +177,6 @@ type server struct {
 	CliOpts   []string      // tuples (short option, value) e.g. ["-p", "10000"...]
 	Hostname string   // used when generating templates
 	formatted chan struct{} // closed when server is formatted
-	Hostname string   // used when generating templates
 }
 
 // newDefaultServer creates a new instance of server struct with default values.
@@ -190,7 +189,6 @@ func newDefaultServer() server {
 		BdevClass:   bdNVMe,
 		Hostname:  host,
 		NrXsHelpers: 2,
-		Hostname:    host,
 	}
 }
 
