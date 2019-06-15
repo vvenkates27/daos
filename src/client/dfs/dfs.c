@@ -966,7 +966,7 @@ dfs_mount(daos_handle_t poh, daos_handle_t coh, int flags, dfs_t **_dfs)
 	daos_prop_t		*prop;
 	struct daos_prop_entry	*prop_entry;
 	struct dfs_entry	entry = {0};
-	bool			sb_exists;
+	bool			sb_exists = false;
 	int			amode, obj_mode;
 	int			rc;
 
