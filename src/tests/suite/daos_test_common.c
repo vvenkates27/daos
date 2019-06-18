@@ -361,15 +361,15 @@ pool_destroy_safe(test_arg_t *arg)
 
 	daos_pool_disconnect(poh, NULL);
 	print_message("pool disconnect "DF_UUIDF"\n",
-		      DP_UUID(arg->pool.pool_uuid));
+                  DP_UUID(arg->pool.pool_uuid));
 
 	/* TODO Pool destroy causes an error after server node failure:
-	 * unreachable node (should just skip server)
-	 * rc = daos_pool_destroy(arg->pool.pool_uuid, arg->group, 1, NULL);
-	 * if (rc && rc != -DER_TIMEDOUT)
-	 * 	print_message("daos_pool_destroy failed, rc: %d\n", rc);
-	 * print_message("pool destroy "DF_UUIDF"\n", DP_UUID(arg->pool.pool_uuid));
-	 */
+	 * unreachable node (should just skip server) */
+	 rc = daos_pool_destroy(arg->pool.pool_uuid, arg->group, 1, NULL);
+	 if (rc && rc != -DER_TIMEDOUT)
+         print_message("daos_pool_destroy failed, rc: %d\n", rc);
+	 print_message("pool destroy "DF_UUIDF"\n", DP_UUID(arg->pool.pool_uuid));
+
 	return rc;
 }
 

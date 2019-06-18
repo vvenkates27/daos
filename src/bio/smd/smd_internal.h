@@ -43,7 +43,7 @@
  * Common file names used by each layer to store persistent data
  */
 #define	SRV_NVME_META	"nvme-meta"
-#define SMD_FILE_SIZE (256 * 1024 * 1024UL)
+#define SMD_FILE_SIZE (16 * 1024 * 1024UL)
 
 
 #define DBTREE_CLASS_SMD_DTAB (DBTREE_SMD_BEGIN + 0)

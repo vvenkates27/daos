@@ -31,7 +31,7 @@
 #define D_LOGFAC	DD_FAC(tests)
 #include "daos_iotest.h"
 
-int		g_dkeys	  = 1000;
+int		g_dkeys	  = 100;
 
 /**
  * Enumerator for Kill op for degraded tests
@@ -266,6 +266,7 @@ static const struct CMUnitTest degraded_tests[] = {
 static int
 degraded_setup(void **state)
 {
+
 	return test_setup(state, SETUP_CONT_CONNECT, true, DEFAULT_POOL_SIZE,
 			  NULL);
 }

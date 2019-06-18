@@ -61,7 +61,7 @@ type control struct {
 //	addr: address and port number separated by a ":"
 func (c *control) connect(addr string) (err error) {
 	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithInsecure())
+	opts = append(opts, grpc.WithInsecure(), grpc.WithWaitForHandshake())
 
 	conn, err := grpc.Dial(addr, opts...)
 	if err != nil {

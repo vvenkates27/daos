@@ -299,7 +299,8 @@ out:
 	*obj_p = obj;
 	return 0;
 failed:
-	D_ERROR("failed to hold object, rc=%d\n", rc);
+	if (rc != -DER_INPROGRESS)
+		D_ERROR("failed to hold object, rc=%d\n", rc);
 	return	rc;
 }
 

@@ -212,7 +212,7 @@ out:
 	return rc;
 }
 
-#define NUM_RGS 1000
+#define NUM_RGS 100
 
 static void
 oid_allocator_checker(void **state)
@@ -223,7 +223,7 @@ oid_allocator_checker(void **state)
 	int		i;
 	int		rc, rc_reduce;
 
-	srand(time(NULL));
+	srand(10);
 	reconnect(arg);
 
 	if (arg->myrank == 0)
@@ -239,8 +239,12 @@ oid_allocator_checker(void **state)
 			goto check;
 		}
 
-		if (i % 100 == 0)
+
+		if (i % 100 == 0) {
+			print_message("Reconnecting...\n");
 			reconnect(arg);
+			print_message("Reconnected... \n");
+		}
 
 		/** Kill 2 servers at different times */
 		if (i && i % (NUM_RGS/3 + 1) == 0) {

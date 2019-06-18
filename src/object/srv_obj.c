@@ -81,7 +81,7 @@ ds_obj_rw_complete(crt_rpc_t *rpc, struct ds_cont_hdl *cont_hdl,
 		rc = vos_oi_get_attr(cont_hdl->sch_cont->sc_hdl, orwi->orw_oid,
 				     orwi->orw_epoch, dth, &orwo->orw_attr);
 		if (rc) {
-			D_ERROR(DF_UOID" can not get status: rc %d\n",
+			D_DEBUG(DB_TRACE, DF_UOID" can not get status: rc %d\n",
 				DP_UOID(orwi->orw_oid), rc);
 			if (status == 0)
 				status = rc;
@@ -892,9 +892,14 @@ ds_obj_rw_handler(crt_rpc_t *rpc)
 
 		rc = ds_obj_rw_local_hdlr(rpc, tag, cont_hdl, cont,
 					  &ioh, false, map_ver, dth);
-		if (rc != 0)
-			D_ERROR(DF_UOID": rw_local_hdlr (fetch) failed %d.\n",
-				DP_UOID(orw->orw_oid), rc);
+		if (rc != 0) {
+			if (rc != -DER_INPROGRESS)
+				D_ERROR(DF_UOID": rw_local_hdlr (fetch) failed %d.\n",
+					DP_UOID(orw->orw_oid), rc);
+			else
+				D_DEBUG(DB_IO, DF_UOID": rw_local_hdlr (fetch) failed %d.\n",
+                                        DP_UOID(orw->orw_oid), rc);
+		}
 
 		D_TIME_END(tls->ot_sp, OBJ_PF_UPDATE_LOCAL);
 
