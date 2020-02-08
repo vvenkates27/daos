@@ -5,8 +5,10 @@ def scons():
     """Execute build"""
     Import('denv', 'prereqs', 'utest_utils')
 
+    pmemobj_libs = ['pthread', 'pmemobj']
     libraries = ['vos', 'bio', 'abt', 'pthread', 'daos_common', 'daos_tests',
-                 'gurt', 'cart', 'uuid', 'pthread', 'pmemobj', 'cmocka', 'gomp']
+                 'gurt', 'cart', 'uuid', 'cmocka', 'gomp']
+    libraries.append(pmemobj_libs)
 
     prereqs.require(denv, 'argobots')
 
@@ -22,6 +24,9 @@ def scons():
     denv.AppendUnique(CPPPATH=["../../common/tests"])
     evt_ctl = daos_build.program(denv, 'evt_ctl', ['evt_ctl.c', utest_utils],
                                  LIBS=libraries)
+    pmemobj_mt_safety = daos_build.program(denv, 'pmemobj_mt_safety',
+                                           'pmemobj_mt_safety.c',
+                                            LIBS=pmemobj_libs)
 
     vos_size = daos_build.program(denv, 'vos_size', ['vos_size.c'],
                                   LIBS=libraries)
